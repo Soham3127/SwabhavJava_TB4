@@ -1,0 +1,127 @@
+> RYUK:
+import java.util.*;
+
+public class GuitarMain {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        Inventory inventory = new Inventory();
+        preloadInventory(inventory);
+
+        while (true) {
+            System.out.println("\n===== Guitar Inventory System =====");
+            System.out.println("1. Admin - Add New Guitar");
+            System.out.println("2. User - Search Guitars");
+            System.out.println("3. Exit");
+            System.out.print("Choose an option: ");
+            String choice = sc.nextLine();
+
+            switch (choice) {
+                case "1":
+                    try {
+                        System.out.print("Serial Number: ");
+                        String serial = sc.nextLine();
+
+                        System.out.print("Price: ");
+                        double price = Double.parseDouble(sc.nextLine());
+
+                        System.out.print("Builder: ");
+                        Builder builder = Builder.valueOf(sc.nextLine().toUpperCase());
+
+                        System.out.print("Model: ");
+                        String model = sc.nextLine();
+
+                        System.out.print("Type: ");
+                        Type type = Type.valueOf(sc.nextLine().toUpperCase());
+
+                        System.out.print("Strings: ");
+                        int numStrings = Integer.parseInt(sc.nextLine());
+
+                        System.out.print("Back Wood: ");
+                        Wood back = Wood.valueOf(sc.nextLine().toUpperCase());
+
+                        System.out.print("Top Wood: ");
+                        Wood top = Wood.valueOf(sc.nextLine().toUpperCase());
+
+                        GuitarSpec spec = new GuitarSpec(builder, model, type, numStrings, back, top);
+                        inventory.addGuitar(new Guitar(serial, price, spec));
+
+                        System.out.println("\n✅ Guitar added successfully!");
+                        inventory.displayTable(inventory.getAllGuitars());
+                    } catch (Exception e) {
+                        System.out.println("❌ Error: " + e.getMessage());
+                    }
+                    break;
+
+                case "2":
+                    handleSearch(sc, inventory);
+                    break;
+
+                case "3":
+                    System.out.println("👋 Exiting...");
+                    return;
+
+                default:
+                    System.out.println("❌ Invalid option.");
+            }
+        }
+    }
+
+    private static void preloadInventory(Inventory inv) {
+        inv.addGuitar(new Guitar("S001", 5000, new GuitarSpec(Builder.FENDER, "Strat", Type.ELECTRIC, 6, Wood.ALDER, Wood.ALDER)));
+        inv.addGuitar(new Guitar("S002", 4500, new GuitarSpec(Builder.GIBSON, "Les Paul", Type.ELECTRIC, 6, Wood.MAHOGANY, Wood.MAPLE)));
+        inv.addGuitar(new Guitar("S003", 3000, new GuitarSpec(Builder.MARTIN, "D-28", Type.ACOUSTIC, 6, Wood.ROSEWOOD, Wood.SPRUCE)));
+        inv.addGuitar(new Guitar("S004", 3500, new GuitarSpec(Builder.YAMAHA, "F310", Type.ACOUSTIC, 6, Wood.NATO, Wood.SPRUCE)));
+        inv.addGuitar(new Guitar("S005", 5200, new GuitarSpec(Builder.FENDER, "Telecaster", Type.ELECTRIC, 6, Wood.ASH, Wood.ASH)));
+    }
+
+    private static void handleSearch(Scanner sc, Inventory inventory) {
+        List<Guitar> currentList = inventory.getAllGuitars();
+        inventory.displayTable(currentList);
+
+        while (true) {
+            try {
+                System.out.print("\nBuilder (or press Enter): ");
+                String builderInput = sc.nextLine();
+                Builder builder = builderInput.isEmpty() ? null : Builder.valueOf(builderInput.toUpperCase());
+
+                System.out.print("Model (or press Enter): ");
+                String model = sc.nextLine();
+                if (model.isEmpty()) model = null;
+
+                System.out.print("Type (or press Enter): ");
+                String typeInput = sc.nextLine();
+                Type type = typeInput.isEmpty() ? null : Type.valueOf(typeInput.toUpperCase());
+
+> RYUK:
+System.out.print("Strings (or press Enter): ");
+                String strInput = sc.nextLine();
+                Integer numStrings = strInput.isEmpty() ? null : Integer.parseInt(strInput);
+
+                System.out.print("Back Wood (or press Enter): ");
+                String backInput = sc.nextLine();
+                Wood back = backInput.isEmpty() ? null : Wood.valueOf(backInput.toUpperCase());
+
+                System.out.print("Top Wood (or press Enter): ");
+                String topInput = sc.nextLine();
+                Wood top = topInput.isEmpty() ? null : Wood.valueOf(topInput.toUpperCase());
+
+                GuitarSpec filterSpec = new GuitarSpec(builder, model, type, numStrings != null ? numStrings : 0, back, top);
+                currentList = inventory.searchGuitars(currentList, filterSpec, numStrings);
+
+                if (currentList.isEmpty()) {
+                    System.out.println("❌ No matching guitars.");
+                    break;
+                }
+
+                System.out.println("\n🎯 Matching Guitars:");
+                inventory.displayTable(currentList);
+
+                System.out.print("🔄 Filter again? (yes/no): ");
+                if (!sc.nextLine().equalsIgnoreCase("yes")) break;
+
+            } catch (Exception e) {
+                System.out.println("❌ Error: " + e.getMessage());
+            }
+        }
+    }
+}

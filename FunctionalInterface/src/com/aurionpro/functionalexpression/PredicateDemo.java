@@ -1,0 +1,17 @@
+package com.aurionpro.functionalexpression;
+
+import java.util.function.Predicate;
+
+public class PredicateDemo {
+	public static void main(String[] args) {
+		
+		//Odd number Checker 
+		Predicate<Integer> isEven = num-> num% 2==0;
+		System.out.println("The give number is odd :  " + isEven.test(1));
+										
+		Predicate<String> isNull = s -> !s.isEmpty();
+		System.out.println(isNull.test((""));
+		
+	}
+
+}

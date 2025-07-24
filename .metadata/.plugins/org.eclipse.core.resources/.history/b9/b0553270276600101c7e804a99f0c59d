@@ -1,0 +1,21 @@
+package com.aurionpro.mini.project.TicTacToeUsingFacade;
+
+public class Board {
+	
+	int grid;
+	
+	
+	
+	
+	
+	public void displayBoard() {};
+	
+	public String isFull() {
+		
+		return "Is full";
+	}
+
+}
+
+
+

@@ -1,0 +1,14 @@
+package com.weekly.assignment02.guitarviolation;
+
+import java.util.LinkedList;
+
+public class Inventory{
+	private List Guitar;
+	
+	public Inventory() {
+		Guitar = new LinkedList();
+	}
+	
+	public void addGuitar()
+
+}

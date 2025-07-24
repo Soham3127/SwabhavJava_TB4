@@ -1,0 +1,24 @@
+package com.weekly.assignment02.GuitarApp;
+
+public class Guitar {
+    private int id;
+    private double price;
+    private GuitarSpec spec;
+
+    public Guitar(int serialCounter, double price, GuitarSpec spec) {
+        this.id = serialCounter;
+        this.price = price;
+        this.spec = spec;
+    }
+
+    public String getId() { return id; }
+    public double getPrice() { return price; }
+    public GuitarSpec getSpec() { return spec; }
+
+    public void display() {
+        System.out.printf("| %-2s | %-9s | %-10s | %-8s | %-7d | %-15s | %-13s | %-6.2f |\n",
+            id, spec.getBuilder(), spec.getModel(), spec.getType(), spec.getNumStrings(),
+            spec.getBackWood(), spec.getTopWood(), price);
+    }
+}
+

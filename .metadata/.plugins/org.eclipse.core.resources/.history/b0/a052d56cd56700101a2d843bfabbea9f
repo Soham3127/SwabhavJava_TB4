@@ -1,0 +1,92 @@
+package com.aurionpro.guitarapp;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+public class Inventory {
+    private List<Guitar> guitars;
+
+    public Inventory() {
+        guitars = new ArrayList<>();
+        loadInitialInventory(); // Pre-added guitars
+    }
+
+    private void loadInitialInventory() {
+        addGuitar("1", 1500.00, new GuitarSpec(Builder.FENDER, "stratocaster", Type.ELECTRIC, Wood.MAHOGANY, Wood.MAPLE, 6));
+        addGuitar("2", 1200.00, new GuitarSpec(Builder.MARTIN, "d-28", Type.ACOUSTIC, Wood.BRAZILIAN_ROSEWOOD, Wood.CEDAR, 6));
+        addGuitar("3", 1800.00, new GuitarSpec(Builder.GIBSON, "les paul", Type.ELECTRIC, Wood.MAPLE, Wood.MAPLE, 6));
+        addGuitar("4", 1000.00, new GuitarSpec(Builder.COLLINGS, "om2h", Type.ACOUSTIC, Wood.MAHOGANY, Wood.CEDAR, 12));
+        addGuitar("5", 2000.00, new GuitarSpec(Builder.RYAN, "nightingale", Type.ACOUSTIC, Wood.COCOBOLO, Wood.ADIRONDACK, 6));
+        addGuitar("6", 950.00, new GuitarSpec(Builder.OLSON, "sj", Type.ELECTRIC, Wood.INDIAN_ROSEWOOD, Wood.SITKA, 6));
+    }
+
+    public void addGuitar(String serialNumber, double price, GuitarSpec spec) {
+        guitars.add(new Guitar(serialNumber, price, spec));
+        System.out.println("✅ Guitar Added Successfully!");
+    }
+
+    public List<Guitar> search(GuitarSpec searchSpec) {
+        List<Guitar> matchingGuitars = new ArrayList<>();
+        for (Guitar guitar : guitars) {
+            if (guitar.getSpec().matches(searchSpec)) {
+                matchingGuitars.add(guitar);
+            }
+        }
+        return matchingGuitars;
+    }
+
+    public void displayInventory() {
+        if (guitars.isEmpty()) {
+            System.out.println("🚫 Inventory is empty.");
+            return;
+        }
+
+        displayTableHeader();
+        for (Guitar g : guitars) {
+            displayGuitarRow(g);
+        }
+    }
+
+    public void sortByPrice(boolean ascending) {
+        if (guitars.isEmpty()) {
+            System.out.println("🚫 No guitars to sort.");
+            return;
+        }
+
+        guitars.sort(Comparator.comparingDouble(Guitar::getPrice));
+        if (!ascending) {
+            Collections.reverse(guitars);
+        }
+
+        System.out.println("🎸 Inventory sorted by price (" + (ascending ? "Ascending" : "Descending") + "):");
+        displayInventory();
+    }
+
+    // === Display Helpers ===
+
+    public void displayTableHeader() {
+        System.out.println("--------------------------------------------------------------------------------------------");
+        System.out.printf("| %-3s | %-10s | %-12s | %-8s | %-7s | %-15s | %-14s | %-7s |\n",
+                "ID", "Builder", "Model", "Type", "Strings", "Back Wood", "Top Wood", "Price");
+        System.out.println("--------------------------------------------------------------------------------------------");
+    }
+
+    public void displayGuitarRow(Guitar g) {
+        GuitarSpec s = g.getSpec();
+        System.out.printf("| %-3s | %-10s | %-12s | %-8s | %-7s | %-15s | %-14s | %-7.2f |\n",
+                g.getSerialNumber(),
+                s.getBuilder(),
+                s.getModel(),
+                s.getType(),
+                s.getNumStrings() == null ? "-" : s.getNumStrings(),
+                s.getBackWood(),
+                s.getTopWood(),
+                g.getPrice());
+    }
+
+    public List<Guitar> getGuitars() {
+        return guitars;
+    }
+}

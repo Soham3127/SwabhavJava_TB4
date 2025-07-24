@@ -1,0 +1,26 @@
+package com.aurionpro.testing;
+
+import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class NestedTestDemo {
+	
+	
+	class group1Test{
+		
+		void test1() {
+			assertTrue(true);
+			System.out.println("Testing test one ");
+		}
+		
+		
+		class group2Test{
+			
+			void test2() {
+				assertTrue(true);
+				System.out.println("Testing test two");
+			}
+		
+	}
+
+}

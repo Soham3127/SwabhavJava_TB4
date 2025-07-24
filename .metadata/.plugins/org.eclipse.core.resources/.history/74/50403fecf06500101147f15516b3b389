@@ -1,0 +1,122 @@
+package com.weekly.assignment02.GuitarEnum;
+
+import java.util.InputMismatchException;
+import java.util.List;
+import java.util.Scanner;
+
+public class GuitarMain {
+	public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        Inventory inventory = new Inventory();
+
+        inventory.addGuitar("V95693", 1499.95,
+                new GuitarSpec(Builder.FENDER, "Stratocastor", Type.ELECTRIC, 6,
+                        Wood.ALDER, Wood.ALDER));
+
+        inventory.addGuitar("V95694", 1199.95,
+                new GuitarSpec(Builder.MARTIN, "D-28", Type.ACOUSTIC, 6,
+                        Wood.BRAZILIAN_ROSEWOOD, Wood.ADIRONDACK));
+
+        System.out.println("Welcome to Rick’s Guitar Inventory App!");
+
+        while (true) {
+            try {
+                System.out.println("\n1. Show All Guitars\n2. Search Guitar\n3. Exit");
+                System.out.print("Choose option: ");
+                int choice = sc.nextInt();
+                sc.nextLine(); 
+
+                switch (choice) {
+                    case 1:
+                        System.out.println("\n--- Current Inventory ---");
+                        inventory.showInventory();
+                        break;
+
+                    case 2:
+                        System.out.println("\n--- Enter Search Criteria ---");
+
+                        Builder builder = null;
+                        while (builder == null) {
+                            System.out.print("Builder (e.g.  FENDER, MARTIN, GIBSON, COLLINGS, OLSON, RYAN, PRS, ANY): ");
+                            try {
+                                builder = Builder.valueOf(sc.nextLine().trim().toUpperCase());
+                            } catch (IllegalArgumentException e) {
+                                System.out.println("Invalid builder. Try again.");
+                            }
+                        }
+
+                        System.out.print("Model: ");
+                        String model = sc.nextLine().trim();
+
+                        Type type = null;
+                        while (type == null) {
+                            System.out.print("Type (ACOUSTIC/ELECTRIC): ");
+                            try {
+                                type = Type.valueOf(sc.nextLine().trim().toUpperCase());
+                            } catch (IllegalArgumentException e) {
+                                System.out.println("Invalid type. Try again.");
+                            }
+                        }
+
+                        int numStrings = 0;
+                        while (numStrings <= 0) {
+                            System.out.print("Number of Strings: ");
+                            try {
+                                numStrings = sc.nextInt();
+                                sc.nextLine(); 
+                            } catch (InputMismatchException e) {
+                                System.out.println("Enter a valid number.");
+                                sc.nextLine(); 
+                        }
+
+                        Wood backWood = null;
+                        while (backWood == null) {
+                            System.out.print("Back Wood (e.g. ALDER, BRAZILIAN_ROSEWOOD): ");
+                            try {
+                                backWood = Wood.valueOf(sc.nextLine().trim().toUpperCase());
+                            } catch (IllegalArgumentException e) {
+                                System.out.println("Invalid wood. Try again.");
+                            }
+                        }
+
+                        Wood topWood = null;
+                        while (topWood == null) {
+                            System.out.print("Top Wood (e.g.  INDIAN_ROSEWOOD, BRAZILIAN_ROSEWOOD, MAHOGANY, MAPLE,\r\n"
+                            		+ "    COCOBOLO, CEDAR, ADIRONDACK, ALDER, SITKA): ");
+                            try {
+                                topWood = Wood.valueOf(sc.nextLine().trim().toUpperCase());
+                            } catch (IllegalArgumentException e) {
+                                System.out.println("Invalid wood. Try again.");
+                            }
+                        }
+
+                        GuitarSpec searchSpec = new GuitarSpec(builder, model, type, numStrings, backWood, topWood);
+                        List<Guitar> results = inventory.search(searchSpec);
+
+                        if (results.isEmpty()) {
+                            System.out.println("No matching guitars found.");
+                        } else {
+                            System.out.println("\n--- Matching Guitars ---");
+                            for (Guitar g : results) {
+                                System.out.println(g);
+                            }
+                        }
+                        break;}
+
+                    case 3:
+                        System.out.println("Exiting...");
+                        sc.close();
+                        return;
+
+                    default:
+                        System.out.println("Invalid option. Try 1, 2, or 3.");
+                }
+
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid input. Please enter numbers correctly.");
+                sc.nextLine(); 
+            }
+        }
+        }
+}
+

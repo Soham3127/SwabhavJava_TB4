@@ -1,0 +1,41 @@
+package com.aurionpro.mini.project05.TicTacToeUsingFacade;
+
+import java.util.Scanner;
+
+public class TicTacToeFacade {
+	public static void main(String[] args) {
+
+	private void startGame() {
+		Scanner scanner = new Scanner(System.in);
+
+		System.out.println("------Welcome to Tic Tac Toe!----");
+		//Player Input 
+		System.out.println("Player 1 , Enter your name: ");
+		String name1 = scanner.nextLine();
+
+		System.out.println("Player 2 , Enter your name: ");
+		String name2 = scanner.nextLine();
+
+		TicTacToeFacade facade = new TicTacToeFacade();
+		facade.startGame();
+		
+		
+		Players player1= new Players(name1,'X');
+		
+		Players player2 = new Players(name2,'O');
+		
+		Players currentPlayer = player1;
+		
+		Board board = new Board();
+		
+		//GameEngine engine = new GameEngine();
+		
+		GameStatus status = GameStatus.IN_PROGRESS;
+
+	}
+
+}
+
+}
+
+}

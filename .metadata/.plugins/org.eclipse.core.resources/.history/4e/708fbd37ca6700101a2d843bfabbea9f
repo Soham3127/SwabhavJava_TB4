@@ -1,0 +1,28 @@
+package com.weekly.assignment02.GuitarApp;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Inventory {
+    private List<Guitar> guitars = new ArrayList<>();
+
+    public void addGuitar(String serialNumber, double price, GuitarSpec spec) {
+        guitars.add(new Guitar(serialNumber, price, spec));
+    }
+
+    public List<Guitar> search(GuitarSpec searchSpec) {
+        List<Guitar> matchingGuitars = new ArrayList<>();
+        for (Guitar guitar : guitars) {
+            if (guitar.getSpec().matches(searchSpec)) {
+                matchingGuitars.add(guitar);
+            }
+        }
+        return matchingGuitars;
+    }
+
+    public void showInventory() {
+        for (Guitar g : guitars) {
+            System.out.println(g);
+        }
+    }
+}

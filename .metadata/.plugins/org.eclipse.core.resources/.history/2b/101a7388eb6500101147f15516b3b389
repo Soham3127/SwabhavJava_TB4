@@ -1,0 +1,5 @@
+package com.weekly.assignment02.GuitarEnum;
+
+public enum Type {
+
+}

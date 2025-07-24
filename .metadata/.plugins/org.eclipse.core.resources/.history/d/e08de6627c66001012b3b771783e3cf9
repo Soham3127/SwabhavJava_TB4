@@ -1,0 +1,100 @@
+package com.aurionpro.mini.project05.TicTacToeUsingFacade;
+
+import java.util.InputMismatchException;
+import java.util.Scanner;
+
+public class TicTacToeFacade {
+
+	public void startGame() {
+		Scanner scanner = new Scanner(System.in);
+
+		System.out.println("------Welcome to Tic Tac Toe!------");
+
+		// Player Input
+		System.out.print("Player 1, Enter your name: ");
+		String name1 = scanner.nextLine();
+
+		System.out.print("Player 2, Enter your name: ");
+		String name2 = scanner.nextLine();
+
+		Players player1 = new Players(name1, 'X');
+		Players player2 = new Players(name2, 'O');
+		Players currentPlayer = player1;
+
+		// Player Move Counter
+		int player1MoveCount = 0;
+		int player2MoveCount = 0;
+
+		Board board = new Board();
+		GameEngine engine = new GameEngine();
+		GameStatus status = GameStatus.IN_PROGRESS;
+
+		while (status == GameStatus.IN_PROGRESS) {
+			board.displayBoard();
+			try {
+				System.out.println("------------------");
+				int moveNumber;
+				if (currentPlayer == player1) {
+					moveNumber = player1MoveCount + 1;
+				} else {
+					moveNumber = player2MoveCount + 1;
+				}
+				System.out.println(
+						currentPlayer.getName() + "'s (" + currentPlayer.getSymbol() + ") turn number " + moveNumber);
+				System.out.print("Enter row (0-2): ");
+				int row = scanner.nextInt();
+				System.out.print("Enter column (0-2): ");
+				int col = scanner.nextInt();
+
+				// Input Validation
+				if (row < 0 || row > 2 || col < 0 || col > 2) {
+					System.out.println("Invalid Input! Please enter a valid row and column between 0-2.");
+					continue;
+				}
+
+				if (!board.isCellEmpty(row, col)) {
+					System.out.println("Cell already occupied! Try a different position.");
+					continue;
+				}
+
+				board.placeSymbol(row, col, currentPlayer.getSymbol());
+
+				// Check Win
+				if (engine.isWinningMove(board.getGrid(), currentPlayer.getSymbol())) {
+					System.out.println("-----------------");
+					board.displayBoard();
+
+					System.out.println("Result: " + currentPlayer.getName() + " wins the game!");
+
+					status = GameStatus.WIN;
+
+					break;
+				}
+
+				// Check Draw
+				if (board.isFull()) {
+					System.out.println("-----------------");
+					board.displayBoard();
+					System.out.println("Result: It's a draw!");
+					status = GameStatus.DRAW;
+					break;
+				}
+
+				// Switch Players
+				if (currentPlayer == player1) {
+					currentPlayer = player2;
+				} else {
+					currentPlayer = player1;
+				}
+
+//			
+
+			} catch (InputMismatchException e) {
+				System.out.println("Inavlid Input , Enter a numeric value ");
+				scanner.nextLine();
+			}
+		}
+
+		scanner.close();
+	}
+}

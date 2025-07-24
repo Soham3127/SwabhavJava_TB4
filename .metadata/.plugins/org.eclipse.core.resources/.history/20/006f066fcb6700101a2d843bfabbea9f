@@ -1,0 +1,186 @@
+package com.weekly.assignment02.GuitaMain;
+
+import java.util.InputMismatchException;
+import java.util.List;
+import java.util.Scanner;
+
+package com.guitar.app;
+
+import com.guitar.enums.*;
+import com.guitar.model.*;
+import com.guitar.repo.Inventory;
+
+import java.util.*;
+
+public class GuitarApp {
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        Inventory inventory = new Inventory();
+        preloadGuitars(inventory);
+
+        while (true) {
+            System.out.println("\n==== Welcome to Rick's Guitar Store ====");
+            System.out.println("1. Admin Panel");
+            System.out.println("2. Customer Panel");
+            System.out.println("3. Exit");
+            System.out.print("Enter your choice: ");
+
+            int choice = getSafeInt(sc);
+            switch (choice) {
+                case 1 -> adminPanel(sc, inventory);
+                case 2 -> customerPanel(sc, inventory);
+                case 3 -> {
+                    System.out.println("Thank you for visiting!");
+                    return;
+                }
+                default -> System.out.println("Invalid choice.");
+            }
+        }
+    }
+
+    private static void adminPanel(Scanner sc, Inventory inventory) {
+        System.out.println("\n==== Admin Panel ====");
+        System.out.print("Enter Serial Number: ");
+        String serial = sc.nextLine();
+
+        double price = getSafeDouble(sc, "Enter Price: ");
+
+        Builder builder = chooseEnum(sc, Builder.values(), "Select Builder:");
+        System.out.print("Enter Model: ");
+        String model = sc.nextLine();
+
+        Type type = chooseEnum(sc, Type.values(), "Select Type:");
+        int numStrings = getSafeInt(sc, "Enter Number of Strings: ");
+        Wood backWood = chooseEnum(sc, Wood.values(), "Select Back Wood:");
+        Wood topWood = chooseEnum(sc, Wood.values(), "Select Top Wood:");
+
+        GuitarSpec spec = new GuitarSpec(builder, model, type, numStrings, backWood, topWood);
+        inventory.addGuitar(serial, price, spec);
+        System.out.println("Guitar added successfully!");
+    }
+
+    private static void customerPanel(Scanner sc, Inventory inventory) {
+        System.out.println("\n==== Customer Panel ====");
+        displayAllGuitars(inventory);
+
+        System.out.println("\n---- Search Your Guitar (Press Enter to skip any spec) ----");
+        Builder builder = chooseEnumOptional(sc, Builder.values(), "Select Builder:");
+        System.out.print("Enter Model: ");
+        String model = sc.nextLine();
+
+        Type type = chooseEnumOptional(sc, Type.values(), "Select Type:");
+        System.out.print("Enter Number of Strings (or press Enter to skip): ");
+        String str = sc.nextLine();
+        int numStrings = str.equals("") ? 0 : getSafeInt(str);
+
+        Wood backWood = chooseEnumOptional(sc, Wood.values(), "Select Back Wood:");
+        Wood topWood = chooseEnumOptional(sc, Wood.values(), "Select Top Wood:");
+
+        GuitarSpec searchSpec = new GuitarSpec(
+                builder != null ? builder : Builder.ANY,
+                model,
+                type != null ? type : Type.ANY,
+                numStrings,
+                backWood != null ? backWood : Wood.ANY,
+                topWood != null ? topWood : Wood.ANY
+        );
+
+        List<Guitar> results = inventory.search(searchSpec);
+        if (results.isEmpty()) {
+            System.out.println("No matching guitars found.");
+        } else {
+            System.out.println("Sort by Price? 1. Asc  2. Desc  3. No Sort");
+            int sortChoice = getSafeInt(sc);
+            if (sortChoice == 1) results.sort(Comparator.comparingDouble(Guitar::getPrice));
+            if (sortChoice == 2) results.sort(Comparator.comparingDouble(Guitar::getPrice).reversed());
+
+            System.out.println("\nMatching Guitars:");
+            printTable(results);
+        }
+    }
+
+    private static void preloadGuitars(Inventory inventory) {
+        inventory.addGuitar("1", 1000, new GuitarSpec(Builder.FENDER, "Strat", Type.ELECTRIC, 6, Wood.MAPLE, Wood.ADIRONDACK));
+        inventory.addGuitar("2", 1500, new GuitarSpec(Builder.GIBSON, "Les Paul", Type.ELECTRIC, 6, Wood.MAHOGANY, Wood.MAPLE));
+        inventory.addGuitar("3", 1200, new GuitarSpec(Builder.MARTIN, "D-18", Type.ACOUSTIC, 6, Wood.CEDAR, Wood.SITKA));
+    }
+
+    private static void displayAllGuitars(Inventory inventory) {
+        System.out.println("\n--- All Guitars in Inventory ---");
+        printTable(inventory.getAllGuitars());
+    }
+
+    private static void printTable(List<Guitar> guitars) {
+        System.out.printf("%-5s %-8s %-12s %-10s %-10s %-10s %-10s %-10s%n", 
+            "No", "Price", "Builder", "Model", "Type", "Strings", "BackWood", "TopWood");
+        int count = 1;
+        for (Guitar g : guitars) {
+            GuitarSpec s = g.getSpec();
+            System.out.printf("%-5d ₹%-7.2f %-12s %-10s %-10s %-10d %-10s %-10s%n",
+                count++, g.getPrice(), s.getBuilder(), s.getModel(), s.getType(),
+                s.getNumStrings(), s.getBackWood(), s.getTopWood());
+        }
+    }
+
+    private static <T extends Enum<T>> T chooseEnum(Scanner sc, T[] values, String msg) {
+        while (true) {
+            System.out.println(msg);
+            for (T value : values) System.out.print(value + " ");
+            System.out.print("\nEnter: ");
+            String input = sc.nextLine().trim().toUpperCase();
+            for (T value : values) {
+                if (value.name().equals(input)) return value;
+            }
+            System.out.println("Invalid input. Try again.");
+        }
+    }
+
+    private static <T extends Enum<T>> T chooseEnumOptional(Scanner sc, T[] values, String msg) {
+        System.out.println(msg);
+        for (T value : values) System.out.print(value + " ");
+        System.out.print("\nEnter (or press Enter to skip): ");
+        String input = sc.nextLine().trim().toUpperCase();
+        if (input.equals("")) return null;
+        for (T value : values) {
+            if (value.name().equals(input)) return value;
+        }
+        return null;
+    }
+
+    private static int getSafeInt(Scanner sc) {
+        while (true) {
+            try {
+                return sc.nextInt();
+            } catch (InputMismatchException e) {
+                System.out.print("Invalid number. Try again: ");
+                sc.nextLine(); // clear buffer
+            }
+        }
+    }
+
+    private static int getSafeInt(String input) {
+        try {
+            return Integer.valueOf(input);
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    private static int getSafeInt(Scanner sc, String msg) {
+        System.out.print(msg);
+        return getSafeInt(sc);
+    }
+
+    private static double getSafeDouble(Scanner sc, String msg) {
+        while (true) {
+            System.out.print(msg);
+            try {
+                return sc.nextDouble();
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid number. Try again.");
+                sc.nextLine();
+            }
+        }
+    }
+}

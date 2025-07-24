@@ -1,0 +1,16 @@
+package com.aurionpro.functionalexpression;
+
+import java.util.ArrayList;
+import java.util.function.Predicate;
+
+public class StudentPass {
+	public static void main(String[] args) {
+		
+		ArrayList<String> marks = new ArrayList<>();
+		
+		
+		Predicate<Integer> isPass = pass -> marks>=40;
+		
+	}
+
+}

@@ -1,0 +1,31 @@
+package com.aurionpro.mini.project05.TicTacToeUsingFacade;
+
+public class GameEngine {
+	
+	
+	public boolean isWinningMove(char [] [] grid, char symbol) {
+		//Pattern in rows
+		for (int i=0; i<3;i++) {
+			if (grid [i][0]== symbol && grid [i][1]== symbol && grid [i][2]== symbol)
+				return true;
+		}
+		//Pattern in column
+		for (int i=0; i<3;i++) {
+			if (grid [i][0]== symbol && grid [i][1]== symbol && grid [i][2]== symbol)
+				return true;
+		}
+		
+		// Pattern in Diagonmal
+		for (int i=0; i<3;i++) {
+			if (grid [i][0]== symbol && grid [i][1]== symbol && grid [i][2]== symbol)
+				return true;
+		}
+		
+		
+		for (int i=0; i<3;i++) {
+			if (grid [i][0]== symbol && grid [i][1]== symbol && grid [i][2]== symbol)
+				return true;
+		}
+		
+
+}

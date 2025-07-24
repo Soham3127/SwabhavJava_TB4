@@ -1,0 +1,43 @@
+package com.weekly.assignment02.GuitarApp;
+
+import java.util.*;
+
+public class Inventory {
+    private List<Guitar> guitars = new ArrayList<>();
+
+    public void addGuitar(Guitar guitar) {
+        guitars.add(guitar);
+    }
+
+    public List<Guitar> getAllGuitars() {
+        return new ArrayList<>(guitars);
+    }
+
+    public List<Guitar> searchGuitars(List<Guitar> list, GuitarSpec spec, Integer numStrings) {
+        List<Guitar> matching = new ArrayList<>();
+        for (Guitar g : list) {
+            GuitarSpec gs = g.getSpec();
+            if (spec.getBuilder() != null && spec.getBuilder() != gs.getBuilder()) continue;
+            if (spec.getModel() != null && !spec.getModel().equalsIgnoreCase(gs.getModel())) continue;
+            if (spec.getType() != null && spec.getType() != gs.getType()) continue;
+            if (numStrings != null && numStrings != gs.getNumStrings()) continue;
+            if (spec.getBackWood() != null && spec.getBackWood() != gs.getBackWood()) continue;
+            if (spec.getTopWood() != null && spec.getTopWood() != gs.getTopWood()) continue;
+            matching.add(g);
+        }
+        return matching;
+    }
+
+    public void displayTable(List<Guitar> list) {
+        System.out.println("------------------------------------------------------------------------------------------------------");
+        System.out.printf("%-8s %-8s %-10s %-10s %-10s %-13s %-13s %-8s%n", "Serial", "Price", "Builder", "Model", "Type", "Back Wood", "Top Wood", "Strings");
+        System.out.println("------------------------------------------------------------------------------------------------------");
+        for (Guitar g : list) {
+            GuitarSpec s = g.getSpec();
+            System.out.printf("%-8s %-8.2f %-10s %-10s %-10s %-13s %-13s %-8d%n",
+                    g.getSerialNumber(), g.getPrice(), s.getBuilder(), s.getModel(), s.getType(),
+                    s.getBackWood(), s.getTopWood(), s.getNumStrings());
+        }
+        System.out.println("------------------------------------------------------------------------------------------------------");
+    }
+}

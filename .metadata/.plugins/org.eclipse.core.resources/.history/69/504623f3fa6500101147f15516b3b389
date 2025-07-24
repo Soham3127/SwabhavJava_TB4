@@ -1,0 +1,28 @@
+package com.aurionpro.testing;
+
+
+import static org.junit.Assert.assertEquals;
+import org.junit.Test;
+
+public class CalculatorTest {
+
+    Calculator cal = new Calculator();
+
+    @Test
+    public void testAddition() {
+        double result = cal.add(10.5, 5.5);
+        assertEquals(16.0, result, 0.001);
+    }
+
+    @Test
+    public void testSubtraction() {
+        double result = cal.sub(10.5, 5.5);
+        assertEquals(5.0, result, 0.001);
+        
+    }
+}
+
+
+
+
+

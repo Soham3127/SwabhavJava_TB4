@@ -1,0 +1,14 @@
+package com.weekly.assignment02.GuitarApp;
+
+
+public enum Type {
+    ACOUSTIC, ELECTRIC, ANY;
+
+    public static void showOptions() {
+        for (Type t : Type.values()) {
+            System.out.print(t + ": ");
+        }
+        System.out.println();
+    }
+}
+

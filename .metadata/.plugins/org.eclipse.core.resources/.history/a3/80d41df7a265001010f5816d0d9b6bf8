@@ -1,0 +1,112 @@
+package com.weekly.assignment02.GuitarInventory;
+
+import java.util.List;
+import java.util.Scanner;
+
+public class GuitarMain {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        Inventory inventory = new Inventory();
+
+        while (true) {
+            System.out.println("\n=== Rick's Guitar Inventory System ===");
+            System.out.println("1. Add Guitar");
+            System.out.println("2. Search Guitar");
+            System.out.println("3. Show Inventory");
+            System.out.println("4. Exit");
+
+            String choice = scanner.nextLine();
+
+            switch (choice) {
+                case "1":
+                    try {
+                        System.out.print("Enter Serial Number: ");
+                        String serial = scanner.nextLine();
+
+                        System.out.print("Enter Price: ");
+                        String priceStr = scanner.nextLine();
+                        double price = Double.valueOf(priceStr);  // safe as per requirement
+
+                        System.out.print("Enter Builder: ");
+                        String builder = scanner.nextLine();
+
+                        System.out.print("Enter Model: ");
+                        String model = sc.nextLine();
+
+                        System.out.print("Enter Type: ");
+                        String type = sc.nextLine();
+
+                        System.out.print("Enter Back Wood: ");
+                        String backWood = sc.nextLine();
+
+                        System.out.print("Enter Top Wood: ");
+                        String topWood = sc.nextLine();
+
+                        GuitarSpec spec = new GuitarSpec(builder, model, type, backWood, topWood);
+                        Guitar guitar = new Guitar(serial, price, spec);
+                        inventory.addGuitar(guitar);
+                        System.out.println("✅ Guitar added successfully!");
+
+                    } catch (Exception e) {
+                        System.out.println("❌ Error: Invalid input. Try again.");
+                    }
+                    break;
+
+                case "2":
+                    try {
+                        System.out.println("Enter search specs (leave blank to skip a field):");
+
+                        System.out.print("Builder: ");
+                        String builder = sc.nextLine();
+
+                        System.out.print("Model: ");
+                        String model = sc.nextLine();
+
+                        System.out.print("Type: ");
+                        String type = sc.nextLine();
+
+                        System.out.print("Back Wood: ");
+                        String backWood = sc.nextLine();
+
+                        System.out.print("Top Wood: ");
+                        String topWood = sc.nextLine();
+
+                        GuitarSpec searchSpec = new GuitarSpec(
+                                builder.isEmpty() ? null : builder,
+                                model.isEmpty() ? null : model,
+                                type.isEmpty() ? null : type,
+                                backWood.isEmpty() ? null : backWood,
+                                topWood.isEmpty() ? null : topWood
+                        );
+
+                        List<Guitar> results = inventory.search(searchSpec);
+                        if (results.isEmpty()) {
+                            System.out.println("No matching guitars found.");
+                        } else {
+                            System.out.println("Matching Guitars:");
+                            for (Guitar g : results) {
+                                g.display();
+                                System.out.println("------------");
+                            }
+                        }
+
+                    } catch (Exception e) {
+                        System.out.println("❌ Error: Search failed.");
+                    }
+                    break;
+
+                case "3":
+                    inventory.showInventory();
+                    break;
+
+                case "4":
+                    System.out.println("👋 Exiting Rick's Guitar Inventory. Goodbye!");
+                    sc.close();
+                    return;
+
+                default:
+                    System.out.println("❌ Invalid choice. Please select 1-4.");
+            }
+        }
+    }
+}

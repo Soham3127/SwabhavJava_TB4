@@ -1,0 +1,20 @@
+package com.aurionpro.mini.project05.TicTacToeUsingFacade;
+
+public class Players {
+	private String name;
+	private char PlayerSymbol;
+
+	public void players(String name, char PlayerSymbol) {
+		this.name = name;
+		this.PlayerSymbol=PlayerSymbol;
+	}
+
+	public String getName() {
+		return name;
+	}
+	
+	public char getSymbol() {
+		return PlayerSymbol;
+	}
+
+}

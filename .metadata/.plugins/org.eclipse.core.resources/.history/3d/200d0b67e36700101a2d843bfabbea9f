@@ -1,0 +1,32 @@
+package com.weekly.assignment02.GuitarApp;
+
+public class Guitar {
+    private GuitarSpec spec;
+    private double price;
+
+    public Guitar(GuitarSpec spec, double price) {
+        this.spec = spec;
+        this.price = price;
+    }
+
+    public GuitarSpec getSpec() {
+        return spec;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void display(int index) {
+        System.out.printf("| %-2d | %-10s | %-12s | %-8s | %-7s | %-16s | %-14s | %-8.2f |\n",
+            index + 1,
+            spec.getBuilder(),
+            spec.getModel(),
+            spec.getType(),
+            spec.getNumStrings(),
+            spec.getBackWood(),
+            spec.getTopWood(),
+            price
+        );
+    }
+}

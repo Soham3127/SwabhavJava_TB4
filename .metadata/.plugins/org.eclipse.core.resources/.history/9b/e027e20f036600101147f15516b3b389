@@ -1,0 +1,55 @@
+package com.aurionpro.testing;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.Test;
+
+public class CalculatorTest {
+
+	Calculator cal = new Calculator();
+
+	@BeforeAll // Will run before all the test cases
+	public static void setUp() {
+		System.out.println("Will run before all the test");
+	}
+
+	@BeforeEach // will run before all the test cases
+	public void beforeNewTest() {
+		System.out.println("New Test has started");
+
+	}
+
+	@AfterAll
+	public static void allTestDone() {
+		System.out.println("All test are done ");
+
+	}
+
+	@Test
+	public void testAddition() {
+		double result = cal.add(10.5, 5.5);
+		assertEquals(16.0, result);
+	}
+
+	@RepeatedTest(5)
+	public void testSubtraction() {
+		double result = cal.sub(10.5, 5.5);
+		assertEquals(5.0, result);
+
+	}
+
+	@DisplayName("Division Testing")
+	@Test
+	public void testDivision() {
+
+		double result = cal.div(10.0, 0.0);
+		assertEquals(5.0, result);
+
+	}
+}

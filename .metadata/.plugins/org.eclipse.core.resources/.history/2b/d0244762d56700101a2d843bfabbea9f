@@ -1,0 +1,14 @@
+package com.weekly.assignment02.GuitarApp;
+
+
+public enum Wood {
+    INDIAN_ROSEWOOD, BRAZILIAN_ROSEWOOD, MAHOGANY, MAPLE,
+    COCOBOLO, CEDAR, ALDER, SITKA, ADIRONDACK, ANY, SPRUCE;
+
+    public static void showOptions() {
+        for (Wood w : Wood.values()) {
+            System.out.print(w + ": ");
+        }
+        System.out.println(  ": ");
+    }
+}

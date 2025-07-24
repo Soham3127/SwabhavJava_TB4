@@ -1,0 +1,99 @@
+package com.weekly.assignment02.GuitarApp;
+
+import java.util.List;
+import java.util.Scanner;
+
+public class CustomerPanel {
+
+    public static void start(Scanner sc, Inventory inventory) {
+        while (true) {
+            System.out.println("\n==== Customer Panel ====");
+            System.out.println("1. View All Guitars");
+            System.out.println("2. Search Guitar");
+            System.out.println("3. Sort by Price (Ascending)");
+            System.out.println("4. Sort by Price (Descending)");
+            System.out.println("5. Exit");
+            System.out.print("Enter choice: ");
+
+            String choice = sc.nextLine();
+            switch (choice) {
+                case "1":
+                    inventory.displayInventory();
+                    break;
+                case "2":
+                    searchGuitars(sc, inventory);
+                    break;
+                case "3":
+                    inventory.sortByPrice(true);
+                    break;
+                case "4":
+                    inventory.sortByPrice(false);
+                    break;
+                case "5":
+                    System.out.println("Returning to main menu.");
+                    return;
+                default:
+                    System.out.println("Invalid choice. Try again.");
+            }
+        }
+    }
+
+    private static void searchGuitars(Scanner sc, Inventory inventory) {
+        System.out.println("\n🎯 Search for Guitar (press space to skip a spec):");
+
+        System.out.print("Enter Model (or press space to skip): ");
+        String model = sc.nextLine().trim();
+        model = model.equals(" ") || model.isEmpty() ? null : model;
+
+        Builder builder = getEnumInput(sc, Builder.class, "Builder");
+        Type type = getEnumInput(sc, Type.class, "Type");
+        Wood backWood = getEnumInput(sc, Wood.class, "Back Wood");
+        Wood topWood = getEnumInput(sc, Wood.class, "Top Wood");
+
+        Integer numStrings = getIntInput(sc, "Number of Strings (or press space to skip):");
+
+        GuitarSpec searchSpec = new GuitarSpec(builder, model, type, backWood, topWood, numStrings);
+        List<Guitar> matches = inventory.search(searchSpec);
+
+        if (matches.isEmpty()) {
+            System.out.println("❌ No matching guitars found.");
+        } else {
+            System.out.println("✅ Matching Guitars:");
+            inventory.displayTableHeader();
+            for (Guitar g : matches) {
+                inventory.displayGuitarRow(g);
+            }
+        }
+    }
+
+    private static <T extends Enum<T>> T getEnumInput(Scanner sc, Class<T> enumClass, String fieldName) {
+        while (true) {
+            System.out.print("Select " + fieldName + " (or press space to skip):\n");
+            EnumUtils.displayOptions(enumClass);
+            System.out.print("Enter: ");
+            String input = sc.nextLine().trim();
+
+            if (input.equals(" ") || input.isEmpty()) return null;
+
+            for (T val : enumClass.getEnumConstants()) {
+                if (val.name().equalsIgnoreCase(input)) return val;
+            }
+            System.out.println("Invalid input. Try again.");
+        }
+    }
+
+    private static Integer getIntInput(Scanner sc, String prompt) {
+        while (true) {
+            System.out.print("Enter " + prompt);
+            String input = sc.nextLine().trim();
+
+            if (input.equals(" ") || input.isEmpty()) return null;
+
+            try {
+                return Integer.parseInt(input);
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid number. Try again.");
+            }
+        }
+    }
+}

@@ -1,0 +1,116 @@
+package com.weekly.assignment02.GuitarApp;
+
+import java.util.*;
+
+public class GuitarMain {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        Inventory inventory = new Inventory();
+
+        // Sample guitars
+        inventory.addGuitar("G001", 5000, new GuitarSpec(Builder.FENDER, "strat", Type.ELECTRIC, 6, Wood.ALDER, Wood.ALDER));
+        inventory.addGuitar("G002", 5200, new GuitarSpec(Builder.GIBSON, "les paul", Type.ELECTRIC, 6, Wood.MAHOGANY, Wood.MAPLE));
+        inventory.addGuitar("G003", 4300, new GuitarSpec(Builder.MARTIN, "d-28", Type.ACOUSTIC, 6, Wood.INDIAN_ROSEWOOD, Wood.SPRUCE));
+        inventory.addGuitar("G004", 3900, new GuitarSpec(Builder.YAMAHA, "f310", Type.ACOUSTIC, 6, Wood.NATO, Wood.SPRUCE));
+
+        while (true) {
+            try {
+                System.out.println("\n==== Guitar Inventory System ====");
+                System.out.println("1. Admin - Add New Guitar");
+                System.out.println("2. User - Search Guitars");
+                System.out.println("3. Exit");
+                System.out.print("Choose an option: ");
+                int option = Integer.parseInt(sc.nextLine());
+
+                if (option == 1) {
+                    System.out.print("Serial Number: ");
+                    String serial = sc.nextLine();
+
+                    System.out.print("Price: ");
+                    double price = Double.parseDouble(sc.nextLine());
+
+                    GuitarSpec spec = getGuitarSpecInput(sc);
+                    System.out.print("Strings: ");
+                    int strings = Integer.parseInt(sc.nextLine());
+
+                    spec.setNumStrings(strings);
+                    inventory.addGuitar(serial, price, spec);
+                    System.out.println("✅ Guitar added!");
+
+                } else if (option == 2) {
+                    List<Guitar> currentList = inventory.getAllGuitars();
+
+                    while (true) {
+                        try {
+                            System.out.println("\n🔎 Enter filter (leave blank to skip):");
+                            GuitarSpec filterSpec = getGuitarSpecInput(sc);
+
+                            System.out.print("Strings (or press Enter): ");
+                            String strInput = sc.nextLine();
+                            Integer numStrings = strInput.isEmpty() ? null : Integer.parseInt(strInput);
+
+                            currentList = inventory.searchGuitars(currentList, filterSpec, numStrings);
+
+                            if (currentList.isEmpty()) {
+                                System.out.println("❌ No matching guitars.");
+                                break;
+                            }
+
+                            System.out.println("\n🎯 Matching Guitars:");
+                            inventory.displayTable(currentList);
+
+                            System.out.print("🔄 Filter again? (yes/no): ");
+                            if (!sc.nextLine().equalsIgnoreCase("yes")) break;
+
+                        } catch (IllegalArgumentException e) {
+                            System.out.println("⚠️ Invalid enum input: " + e.getMessage());
+                        } catch (NumberFormatException e) {
+                            System.out.println("⚠️ Invalid number format.");
+                        } catch (Exception e) {
+                            System.out.println("❌ Error: " + e.getMessage());
+                        }
+                    }
+                } else if (option == 3) {
+                    break;
+                } else {
+                    System.out.println("⚠️ Invalid choice.");
+                }
+
+            } catch (NumberFormatException e) {
+                System.out.println("⚠️ Please enter a valid number.");
+            } catch (Exception e) {
+                System.out.println("❌ Unexpected error: " + e.getMessage());
+            }
+        }
+
+        sc.close();
+    }
+
+    private static GuitarSpec getGuitarSpecInput(Scanner sc) {
+        try {
+            System.out.print("Builder (or press Enter to skip): ");
+            String builderInput = sc.nextLine();
+            Builder builder = builderInput.isEmpty() ? null : Builder.valueOf(builderInput.toUpperCase());
+
+            System.out.print("Model (or press Enter to skip): ");
+            String model = sc.nextLine();
+            model = model.isEmpty() ? null : model;
+
+            System.out.print("Type (or press Enter to skip): ");
+            String typeInput = sc.nextLine();
+            Type type = typeInput.isEmpty() ? null : Type.valueOf(typeInput.toUpperCase());
+
+            System.out.print("Back Wood (or press Enter to skip): ");
+            String backInput = sc.nextLine();
+            Wood back = backInput.isEmpty() ? null : Wood.valueOf(backInput.toUpperCase());
+
+            System.out.print("Top Wood (or press Enter to skip): ");
+            String topInput = sc.nextLine();
+            Wood top = topInput.isEmpty() ? null : Wood.valueOf(topInput.toUpperCase());
+
+            return new GuitarSpec(builder, model, type, 0, back, top); // strings set later
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid enum value entered.");
+        }
+    }
+}

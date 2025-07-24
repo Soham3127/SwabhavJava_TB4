@@ -1,0 +1,23 @@
+package com.weekly.assignment02.guitarviolation;
+
+public class Guitar {
+	private  String serialNumber ,builder, model , type, blackWood , topWood;
+	private double price;
+	
+	
+	
+	
+	public Guitar(String serialNumber , double price ,String builder, String model , String type, String blackWood , String topWood) {
+		this.serialNumber=serialNumber;
+		this.price=price;
+		this.builder= builder;
+		this.model=model;
+		this.type=type;
+		this.blackWood= blackWood;
+		this.topWood= topWood;
+		
+	}
+	
+	public String getStr
+
+}

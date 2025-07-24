@@ -1,0 +1,29 @@
+package com.weekly.assignment02.GuitarInventory;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
+public class Inventory {
+	
+	//List to hold guitars in the inventory 
+	private List guitars;
+	
+	public Inventory() {
+		guitars = new LinkedList();
+	}
+	
+	public void addGuitar(Guitar guitar) {
+		guitars.add(guitar);
+	}
+	
+	public List<Guitar> search (GuitarSpec spec){
+		List<Guitar> = new ArrayList<>();
+		
+		for (Guitar g : guitars) {
+			if (g.get)
+		}
+		
+	}
+
+}

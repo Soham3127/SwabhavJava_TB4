@@ -1,0 +1,90 @@
+package com.ricksInventory;
+
+import java.util.*;
+
+public class Inventory {
+    private List<Guitar> guitars = new ArrayList<>();
+    private static int serialCounter = 1;
+
+    // Add guitar with message control
+    public void addGuitar(double price, Builder builder, String model, Type type, int numStrings,
+                          Wood backWood, Wood topWood, boolean showMessage) {
+        GuitarSpec spec = new GuitarSpec(builder, model.toLowerCase(), type, numStrings, backWood, topWood);
+        Guitar guitar = new Guitar(serialCounter++, price, spec);
+        guitars.add(guitar);
+        if (showMessage)
+            System.out.println("\n✅ Guitar Added Successfully!");
+    }
+
+    // Add sample guitars without showing messages
+    public void addSampleGuitars() {
+        addGuitar(1500.00, Builder.FENDER, "stratocaster", Type.ELECTRIC, 6, Wood.MAHOGANY, Wood.MAPLE, false);
+        addGuitar(1200.00, Builder.MARTIN, "d-28", Type.ACOUSTIC, 6, Wood.BRAZILIAN_ROSEWOOD, Wood.CEDAR, false);
+        addGuitar(1000.00, Builder.GIBSON, "les paul", Type.ELECTRIC, 6, Wood.MAPLE, Wood.MAPLE, false);
+        addGuitar(1600.00, Builder.OLSON, "sj", Type.ACOUSTIC, 12, Wood.INDIAN_ROSEWOOD, Wood.SPRUCE, false);
+        addGuitar(1100.00, Builder.COLLINGS, "d2h", Type.ACOUSTIC, 6, Wood.SITKA, Wood.MAPLE, false);
+        addGuitar(950.00, Builder.PRS, "custom 24", Type.ELECTRIC, 6, Wood.MAHOGANY, Wood.MAPLE, false);
+    }
+
+    // Display full inventory
+    public void displayInventory() {
+        displayInventory(guitars);
+    }
+
+    // Display selected guitars
+    public void displayInventory(List<Guitar> list) {
+        if (list == null || list.isEmpty()) {
+            System.out.println("No guitars to display.");
+            return;
+        }
+
+        System.out.println("\n----------------------------------------------------------");
+        System.out.println("| ID |   Builder  |   Model   |  Type  | Strings |   Back Wood   |   Top Wood    | Price |");
+        System.out.println("----------------------------------------------------------");
+
+        for (Guitar g : list) {
+            GuitarSpec spec = g.getSpec();
+            System.out.printf("| %-2d | %-9s | %-10s | %-7s | %-7d | %-15s | %-13s | %-7.2f |\n",
+                    g.getId(),
+                    spec.getBuilder(),
+                    spec.getModel(),
+                    spec.getType(),
+                    spec.getNumStrings(),
+                    spec.getBackWood(),
+                    spec.getTopWood(),
+                    g.getPrice());
+        }
+        System.out.println("----------------------------------------------------------");
+    }
+
+    // Search for matching guitars (skip null specs)
+    public List<Guitar> search(GuitarSpec searchSpec) {
+        List<Guitar> matching = new ArrayList<>();
+
+        for (Guitar guitar : guitars) {
+            GuitarSpec spec = guitar.getSpec();
+
+            if (searchSpec.getBuilder() != null && spec.getBuilder() != searchSpec.getBuilder())
+                continue;
+
+            if (!searchSpec.getModel().isEmpty() && !spec.getModel().equalsIgnoreCase(searchSpec.getModel()))
+                continue;
+
+            if (searchSpec.getType() != null && spec.getType() != searchSpec.getType())
+                continue;
+
+            if (searchSpec.getNumStrings() != -1 && spec.getNumStrings() != searchSpec.getNumStrings())
+                continue;
+
+            if (searchSpec.getBackWood() != null && spec.getBackWood() != searchSpec.getBackWood())
+                continue;
+
+            if (searchSpec.getTopWood() != null && spec.getTopWood() != searchSpec.getTopWood())
+                continue;
+
+            matching.add(guitar);
+        }
+
+        return matching;
+    }
+}

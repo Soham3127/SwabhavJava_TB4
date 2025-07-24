@@ -1,0 +1,11 @@
+package com.weekly.assignment02.guitarviolation;
+
+public class Guitar {
+	private  String StringNumber ,builder, model , type, blackWood , topWood;
+	private double price;
+	
+	
+	
+	public Guitar(String StringNumber ,String builder, String model , String type, String blackWood , String topWood, double price)
+
+}

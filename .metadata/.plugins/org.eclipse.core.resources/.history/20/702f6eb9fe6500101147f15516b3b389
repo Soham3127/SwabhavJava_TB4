@@ -1,0 +1,34 @@
+package com.aurionpro.testing;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+public class CalculatorTest {
+
+    Calculator cal = new Calculator();
+    @Test
+    public void testAddition() {
+        double result = cal.add(10.5, 5.5);
+        assertEquals(16.0, result);
+    }
+
+    @Test
+    public void testSubtraction() {
+        double result = cal.sub(10.5, 5.5);
+        assertEquals(5.0, result);
+        
+    }
+    @DisplayName("Division Testing")
+    @Test
+    public void testDivision() {
+    	
+    	double result = cal
+    	
+    }
+}
+
+
+
+
+
