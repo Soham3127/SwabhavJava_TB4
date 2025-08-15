@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz App - Review</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .quiz-title {
+            font-size: 1.5rem;
+            color: #333;
+            font-weight: 700;
+        }
+
+        .timer {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%);
+            border-radius: 25px;
+            min-width: 100px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .timer.warning {
+            background: linear-gradient(135deg, #ff4757 0%, #ff3838 100%);
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .review-container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .review-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .review-header h2 {
+            color: #333;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .review-header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .summary-card {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 8px 20px rgba(79, 172, 254, 0.3);
+        }
+
+        .summary-card h3 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .summary-card p {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .question-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+            justify-items: center;
+        }
+
+        .question-card {
+            width: 80px;
+            height: 80px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 3px solid transparent;
+            position: relative;
+        }
+
+        .question-card:hover {
+            transform: scale(1.1);
+        }
+
+        .question-card.answered {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+        }
+
+        .question-card.unanswered {
+            background: linear-gradient(135deg, #6c757d 0%, #adb5bd 100%);
+            color: white;
+        }
+
+        .question-card.bookmarked::after {
+            content: '📌';
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            font-size: 16px;
+            background: white;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 5px;
+        }
+
+        .legend-color.answered {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        }
+
+        .legend-color.unanswered {
+            background: linear-gradient(135deg, #6c757d 0%, #adb5bd 100%);
+        }
+
+        .legend-color.bookmarked {
+            background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+        }
+
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-back {
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+            color: white;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+        }
+
+        .btn-jump {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px 20px;
+            font-size: 0.9rem;
+        }
+
+        .warning-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .warning-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            max-width: 500px;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .warning-content h3 {
+            color: #ff4757;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+
+        .warning-content p {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .warning-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .warning-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-confirm {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-cancel {
+            background: #6c757d;
+            color: white;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 400px;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #e9ecef;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .review-container {
+                padding: 20px;
+                margin: 10px;
+            }
+
+            .summary-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .question-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+            }
+
+            .question-card {
+                width: 60px;
+                height: 60px;
+                font-size: 1rem;
+            }
+
+            .legend {
+                flex-direction: column;
+                align-items: center;
+                gap: 15px;
+            }
+
+            .actions {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <h1 class="quiz-title">QuizMaster - Review Your Answers</h1>
+            <div class="timer" id="timer">05:00</div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="review-container">
+            <div id="loadingSpinner" class="loading">
+                <div class="spinner"></div>
+            </div>
+
+            <div id="reviewContent" style="display: none;">
+                <div class="review-header">
+                    <h2>Review Your Answers</h2>
+                    <p>Take a moment to review your answers before submitting the quiz</p>
+                </div>
+
+                <div class="summary-cards">
+                    <div class="summary-card">
+                        <h3 id="answeredCount">0</h3>
+                        <p>Questions Answered</p>
+                    </div>
+                    <div class="summary-card">
+                        <h3 id="unansweredCount">0</h3>
+                        <p>Questions Remaining</p>
+                    </div>
+                    <div class="summary-card">
+                        <h3 id="bookmarkedCount">0</h3>
+                        <p>Questions Bookmarked</p>
+                    </div>
+                </div>
+
+                <div class="question-grid" id="questionGrid">
+                    <!-- Question cards will be populated by JavaScript -->
+                </div>
+
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-color answered"></div>
+                        <span>Answered</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color unanswered"></div>
+                        <span>Not Answered</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color bookmarked"></div>
+                        <span>📌 Bookmarked</span>
+                    </div>
+                </div>
+
+                <div class="actions">
+                    <button class="btn btn-back" onclick="backToQuiz()">
+                        ← Continue Quiz
+                    </button>
+                    <button class="btn btn-submit" onclick="confirmSubmit()">
+                        ✓ Submit Quiz
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Warning Modal -->
+    <div class="warning-modal" id="submitModal">
+        <div class="warning-content">
+            <h3>⚠️ Submit Quiz?</h3>
+            <p id="submitWarning">Are you sure you want to submit your quiz?</p>
+            <div class="warning-buttons">
+                <button class="warning-btn btn-confirm" onclick="submitQuiz()">
+                    Yes, Submit
+                </button>
+                <button class="warning-btn btn-cancel" onclick="closeSubmitModal()">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Time Warning Modal -->
+    <div class="warning-modal" id="timeWarningModal">
+        <div class="warning-content">
+            <h3>⚠️ Time Warning!</h3>
+            <p id="timeWarningMessage">You have less than 2 minutes remaining!</p>
+            <div class="warning-buttons">
+                <button class="warning-btn btn-confirm" onclick="closeTimeWarning()">
+                    Got it!
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let reviewData = null;
+        let timeLeft = 300;
+        let timerInterval = null;
+        let warningShown = false;
+        let finalWarningShown = false;
+
+        // Initialize the review page
+        async function initializeReview() {
+            try {
+                const response = await fetch('/quiz-data');
+                if (response.ok) {
+                    reviewData = await response.json();
+                    loadReviewData();
+                    startTimer();
+                    document.getElementById('loadingSpinner').style.display = 'none';
+                    document.getElementById('reviewContent').style.display = 'block';
+                } else if (response.status === 401) {
+                    window.location.href = 'login.html';
+                } else {
+                    throw new Error('Failed to load review data');
+                }
+            } catch (error) {
+                console.error('Error loading review:', error);
+                alert('Error loading review. Please try again.');
+                window.location.href = 'quiz';
+            }
+        }
+
+        // Load review data
+        function loadReviewData() {
+            if (!reviewData) return;
+
+            const totalQuestions = reviewData.totalQuestions;
+            const answeredCount = reviewData.answeredCount || 0;
+            const bookmarkedCount = reviewData.bookmarkedCount || 0;
+            const unansweredCount = totalQuestions - answeredCount;
+
+            // Update summary cards
+            document.getElementById('answeredCount').textContent = answeredCount;
+            document.getElementById('unansweredCount').textContent = unansweredCount;
+            document.getElementById('bookmarkedCount').textContent = bookmarkedCount;
+
+            // Load question grid
+            loadQuestionGrid();
+        }
+
+        // Load question grid
+        function loadQuestionGrid() {
+            const grid = document.getElementById('questionGrid');
+            grid.innerHTML = '';
+
+            for (let i = 0; i < reviewData.totalQuestions; i++) {
+                const questionCard = document.createElement('div');
+                questionCard.className = 'question-card';
+                questionCard.textContent = i + 1;
+                questionCard.onclick = () => jumpToQuestion(i);
+
+                // Determine status - this would need to be passed from server
+                // For now, we'll use a simple logic based on current implementation
+                const isAnswered = i < reviewData.answeredCount; // Simplified logic
+                const isBookmarked = false; // Would need server data
+
+                if (isAnswered) {
+                    questionCard.classList.add('answered');
+                } else {
+                    questionCard.classList.add('unanswered');
+                }
+
+                if (isBookmarked) {
+                    questionCard.classList.add('bookmarked');
+                }
+
+                grid.appendChild(questionCard);
+            }
+        }
+
+        // Navigation functions
+        function backToQuiz() {
+            window.location.href = 'quiz.html';
+        }
+
+        function jumpToQuestion(questionIndex) {
+            // Create form to jump to specific question
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = 'quiz';
+
+            const actionInput = document.createElement('input');
+            actionInput.type = 'hidden';
+            actionInput.name = 'action';
+            actionInput.value = 'jump';
+
+            const indexInput = document.createElement('input');
+            indexInput.type = 'hidden';
+            indexInput.name = 'questionIndex';
+            indexInput.value = questionIndex;
+
+            form.appendChild(actionInput);
+            form.appendChild(indexInput);
+            document.body.appendChild(form);
+            form.submit();
+        }
+
+        // Submit functions
+        function confirmSubmit() {
+            const unansweredCount = reviewData.totalQuestions - (reviewData.answeredCount || 0);
+            const warningElement = document.getElementById('submitWarning');
+            
+            if (unansweredCount > 0) {
+                warningElement.innerHTML = `
+                    You have <strong>${unansweredCount}</strong> unanswered questions. 
+                    These will be marked as incorrect.<br><br>
+                    Are you sure you want to submit your quiz?
+                `;
+            } else {
+                warningElement.textContent = 'Are you sure you want to submit your quiz? This action cannot be undone.';
+            }
+
+            document.getElementById('submitModal').style.display = 'flex';
+        }
+
+        function closeSubmitModal() {
+            document.getElementById('submitModal').style.display = 'none';
+        }
+
+        async function submitQuiz() {
+            try {
+                const response = await fetch('/submit-quiz', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: 'submit=true'
+                });
+
+                if (response.ok) {
+                    clearInterval(timerInterval);
+                    window.location.href = 'result.html';
+                } else {
+                    throw new Error('Failed to submit quiz');
+                }
+            } catch (error) {
+                console.error('Error submitting quiz:', error);
+                alert('Error submitting quiz. Please try again.');
+                closeSubmitModal();
+            }
+        }
+
+        // Timer functions
+        function startTimer() {
+            if (reviewData.startTime) {
+                const elapsed = Math.floor((Date.now() - reviewData.startTime) / 1000);
+                timeLeft = Math.max(0, 300 - elapsed);
+            }
+
+            updateTimerDisplay();
+            
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+                checkTimeWarnings();
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    autoSubmitQuiz();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            const timerElement = document.getElementById('timer');
+            
+            timerElement.textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+            if (timeLeft <= 30) {
+                timerElement.classList.add('warning');
+            }
+        }
+
+        function checkTimeWarnings() {
+            if (timeLeft === 120 && !warningShown) {
+                showTimeWarning('You have 2 minutes remaining!');
+                warningShown = true;
+            } else if (timeLeft === 30 && !finalWarningShown) {
+                showTimeWarning('Only 30 seconds left! The quiz will auto-submit soon.');
+                finalWarningShown = true;
+            }
+        }
+
+        function showTimeWarning(message) {
+            document.getElementById('timeWarningMessage').textContent = message;
+            document.getElementById('timeWarningModal').style.display = 'flex';
+        }
+
+        function closeTimeWarning() {
+            document.getElementById('timeWarningModal').style.display = 'none';
+        }
+
+        async function autoSubmitQuiz() {
+            alert('Time\'s up! The quiz will be submitted automatically.');
+            await submitQuiz();
+        }
+
+        // Initialize review when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeReview();
+        });
+    </script>
+</body>
+</html>
